@@ -30,7 +30,9 @@ namespace ModernHttpClient
 
         public bool DisableCaching { get; set; }
 
-        public NativeMessageHandler() : this(false, false) {}
+        public NativeMessageHandler() : this(false, false) {
+            client.SetSslSocketFactory(new ImprovedSSLSocketFactory());
+        }
 
         public NativeMessageHandler(bool throwOnCaptiveNetwork, bool customSSLVerification, NativeCookieHandler cookieHandler = null)
         {
@@ -38,6 +40,8 @@ namespace ModernHttpClient
 
             if (customSSLVerification) client.SetHostnameVerifier(new HostnameVerifier());
             noCacheCacheControl = (new CacheControl.Builder()).NoCache().Build();
+
+            client.SetSslSocketFactory(new ImprovedSSLSocketFactory());
         }
 
         public void RegisterForProgress(HttpRequestMessage request, ProgressDelegate callback)
@@ -180,8 +184,13 @@ namespace ModernHttpClient
                 // Kind of a hack, but the simplest way to find out that server cert. validation failed
                 if (p1.Message == String.Format("Hostname '{0}' was not verified", p0.Url().Host)) {
                     tcs.TrySetException(new WebException(p1.LocalizedMessage, WebExceptionStatus.TrustFailure));
+                }
+                // in the event of "Canceled" exception, throw less scary/disruptive exception per: https://github.com/Youscribe/ModernHttpClient/blob/0bbcb26ec5c9630311a8de48e22beafbfb9798ee/src/ModernHttpClient/Android/OkHttpNetworkHandler.cs
+                else if (p1.Message.ToLowerInvariant().Contains("canceled"))
+                {
+                    tcs.TrySetException(new OperationCanceledException());
                 } else {
-                    tcs.TrySetException(p1);
+                    tcs.TrySetException(new WebException(p1.Message));
                 }
             }
 
