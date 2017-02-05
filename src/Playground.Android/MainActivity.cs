@@ -15,6 +15,7 @@ using System.Text;
 using System.Net;
 using System.Linq;
 using System.IO;
+using System.Net.Http.Headers;
 
 namespace Playground.Android
 {
@@ -85,7 +86,11 @@ namespace Playground.Android
             };
 
             button.Click += async (o, e) => {
+
                 var handler = new NativeMessageHandler();
+
+
+
                 var client = new HttpClient(handler);
 
                 currentToken = new CancellationTokenSource();
@@ -93,6 +98,7 @@ namespace Playground.Android
 
                 client.DefaultRequestHeaders.UserAgent.Add(new System.Net.Http.Headers.ProductInfoHeaderValue("ModernHttpClient", "1.0"));
                 client.DefaultRequestHeaders.UserAgent.Add(new System.Net.Http.Headers.ProductInfoHeaderValue("MyTest", "2.0"));
+
                 handler.DisableCaching = true;
 
                 st.Start();
@@ -119,7 +125,9 @@ namespace Playground.Android
                     await stream.CopyToAsync(ms, 4096, currentToken.Token);
                     var bytes = ms.ToArray();
 
-                    result.Text = String.Format("Read {0} bytes", bytes.Length);
+                    var s = Encoding.UTF8.GetString(bytes);
+
+                    result.Text = String.Format("Read {0} bytes from {1}: {2}", bytes.Length, resp.Headers.Location, s);
 
                     var md5 = MD5.Create();
                     var hash = md5.ComputeHash(bytes);
