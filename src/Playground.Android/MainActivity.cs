@@ -125,9 +125,7 @@ namespace Playground.Android
                     await stream.CopyToAsync(ms, 4096, currentToken.Token);
                     var bytes = ms.ToArray();
 
-                    var s = Encoding.UTF8.GetString(bytes);
-
-                    result.Text = String.Format("Read {0} bytes from {1}: {2}", bytes.Length, resp.Headers.Location, s);
+                    result.Text = String.Format("Read {0} bytes from {1}", bytes.Length, resp.Headers.Location);
 
                     var md5 = MD5.Create();
                     var hash = md5.ComputeHash(bytes);

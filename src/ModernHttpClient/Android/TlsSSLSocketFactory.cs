@@ -13,70 +13,75 @@ using Javax.Net.Ssl;
 
 namespace ModernHttpClient
 {
-    internal class ImprovedSSLSocketFactory : SSLSocketFactory
+    public class TlsSSLSocketFactory : SSLSocketFactory
     {
-        SSLSocketFactory _factory = (SSLSocketFactory)Default;
+        readonly SSLSocketFactory factory = (SSLSocketFactory)Default;
 
         public override string[] GetDefaultCipherSuites()
         {
-            return _factory.GetDefaultCipherSuites();
+            return factory.GetDefaultCipherSuites();
         }
 
         public override string[] GetSupportedCipherSuites()
         {
-            return _factory.GetSupportedCipherSuites();
+            return factory.GetSupportedCipherSuites();
         }
-
         public override Java.Net.Socket CreateSocket(Java.Net.InetAddress address, int port, Java.Net.InetAddress localAddress, int localPort)
         {
-            SSLSocket socket = (SSLSocket)_factory.CreateSocket(address, port, localAddress, localPort);
+            SSLSocket socket = (SSLSocket)factory.CreateSocket(address, port, localAddress, localPort);
             socket.SetEnabledProtocols(socket.GetSupportedProtocols());
+            socket.SetEnabledCipherSuites(socket.GetSupportedCipherSuites());
 
             return socket;
         }
 
         public override Java.Net.Socket CreateSocket(Java.Net.InetAddress host, int port)
         {
-            SSLSocket socket = (SSLSocket)_factory.CreateSocket(host, port);
+            SSLSocket socket = (SSLSocket)factory.CreateSocket(host, port);
             socket.SetEnabledProtocols(socket.GetSupportedProtocols());
+            socket.SetEnabledCipherSuites(socket.GetSupportedCipherSuites());
 
             return socket;
         }
 
         public override Java.Net.Socket CreateSocket(string host, int port, Java.Net.InetAddress localHost, int localPort)
         {
-            SSLSocket socket = (SSLSocket)_factory.CreateSocket(host, port, localHost, localPort);
+            SSLSocket socket = (SSLSocket)factory.CreateSocket(host, port, localHost, localPort);
             socket.SetEnabledProtocols(socket.GetSupportedProtocols());
+            socket.SetEnabledCipherSuites(socket.GetSupportedCipherSuites());
 
             return socket;
         }
 
         public override Java.Net.Socket CreateSocket(string host, int port)
         {
-            SSLSocket socket = (SSLSocket)_factory.CreateSocket(host, port);
+            SSLSocket socket = (SSLSocket)factory.CreateSocket(host, port);
             socket.SetEnabledProtocols(socket.GetSupportedProtocols());
+            socket.SetEnabledCipherSuites(socket.GetSupportedCipherSuites());
 
             return socket;
         }
 
         public override Java.Net.Socket CreateSocket(Java.Net.Socket s, string host, int port, bool autoClose)
         {
-            SSLSocket socket = (SSLSocket)_factory.CreateSocket(s, host, port, autoClose);
+            SSLSocket socket = (SSLSocket)factory.CreateSocket(s, host, port, autoClose);
             socket.SetEnabledProtocols(socket.GetSupportedProtocols());
+            socket.SetEnabledCipherSuites(socket.GetSupportedCipherSuites());
 
             return socket;
         }
 
         protected override void Dispose(bool disposing)
         {
-            _factory.Dispose();
+            factory.Dispose();
             base.Dispose(disposing);
         }
 
         public override Java.Net.Socket CreateSocket()
         {
-            SSLSocket socket = (SSLSocket)_factory.CreateSocket();
+            SSLSocket socket = (SSLSocket)factory.CreateSocket();
             socket.SetEnabledProtocols(socket.GetSupportedProtocols());
+            socket.SetEnabledCipherSuites(socket.GetSupportedCipherSuites());
 
             return socket;
         }

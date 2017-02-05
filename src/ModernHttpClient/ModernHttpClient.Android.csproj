@@ -53,7 +53,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Net.Http" />
     <Reference Include="Mono.Android" />
-    <Compile Include="Android\ImprovedSSLSocketFactory.cs" />
+    <Compile Include="Android\TlsSSLSocketFactory.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Android\OkHttpNetworkHandler.cs" />
     <None Include="packages.config" />
