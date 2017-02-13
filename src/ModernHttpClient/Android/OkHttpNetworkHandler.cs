@@ -185,15 +185,18 @@ namespace ModernHttpClient
             public void OnFailure(Request p0, Java.IO.IOException p1)
             {
                 // Kind of a hack, but the simplest way to find out that server cert. validation failed
-                if (p1.Message == String.Format("Hostname '{0}' was not verified", p0.Url().Host)) {
+                if (p0 != null && p1 != null && p1.Message == String.Format("Hostname '{0}' was not verified", p0.Url().Host)) {
                     tcs.TrySetException(new WebException(p1.LocalizedMessage, WebExceptionStatus.TrustFailure));
                 }
                 // in the event of "Canceled" exception, throw less scary/disruptive exception per: https://github.com/Youscribe/ModernHttpClient/blob/0bbcb26ec5c9630311a8de48e22beafbfb9798ee/src/ModernHttpClient/Android/OkHttpNetworkHandler.cs
-                else if (p1.Message.ToLowerInvariant().Contains("canceled"))
+                else if (p1 != null && p1.Message != null && p1.Message.ToLowerInvariant().Contains("canceled"))
                 {
                     tcs.TrySetException(new OperationCanceledException());
-                } else {
+                } else if (p1 != null) {
                     tcs.TrySetException(new WebException(p1.Message));
+                } else
+                {
+                    tcs.TrySetException(new WebException("Null exception"));
                 }
             }
 
